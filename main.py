@@ -1,45 +1,45 @@
-from fastapi import FastAPI
-app = FastAPI()
-
+#!/bin/python3
+from fastapi import FastAPI 
 from openai import OpenAI
-
-import uvicorn
+import config
 from pydantic import BaseModel
-import os
-from config import api_key, assistant_id
+import uvicorn
+import os 
+
+assistant_id = config.assistant_id
+api_key = os.environ['OPENAI_API']
+
+client = OpenAI(api_key=api_key)
+
+app = FastAPI()
 
 class Body(BaseModel):
     text: str
 
-api_key = os.environ['OPENAI_API']
+# get, post, put, and delete
 
-# Initialize OpenAI API
-client = OpenAI(api_key=api_key)
-
-# get, post, put, and delete actions
-
-@app.get("/")
+@app.get("/") 
 def welcome():
-   return {"message": "Hello, this is the LLM ChatGPT API V2!"}
+    return {"message": "Welcome to ChatGPT AI Application"}
 
-@app.get("/home")
-def home():
-   return {"message": "Welcome to the LLM ChatGPT API! Home!"}
+@app.get("/home") 
+def welcome():
+    return {"message": "welcome home"}
 
 @app.post("/dummy") 
 def demo_function(data):
     return {"message": data}
 
-@app.post("/generate-llm-response")
+@app.post("/response")
 def generate(body: Body):
     prompt = body.text # user input
     thread = client.beta.threads.create()
-    print(prompt)
     message = client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
         content=prompt
     )
+    
     run = client.beta.threads.runs.create(
         thread_id = thread.id,
         assistant_id=assistant_id
@@ -51,12 +51,8 @@ def generate(body: Body):
             messages = client.beta.threads.messages.list(thread_id=thread.id)
             latest_message = messages.data[0]
             text = latest_message.content[0].text.value
-            print(text)
             break;
-    response = {
-        "llm_response": text
-    }
-    return response   
+    return text   
 
 if __name__ == "__main__":
     uvicorn.run(app,host="0.0.0.0",port=80)

@@ -20,7 +20,7 @@ client = OpenAI(api_key=api_key)
 
 @app.get("/")
 def welcome():
-   return {"message": "Hello, this is the LLM ChatGPT API!"}
+   return {"message": "Hello, this is the LLM ChatGPT API V2!"}
 
 @app.get("/home")
 def home():

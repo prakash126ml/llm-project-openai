@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: mychatgptcontainer
-        image: prakash126/chatgpt-project:v1
+        image: prakash126/chatgpt-project:v3
         ports:
         - containerPort: 80
         env:
